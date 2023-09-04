@@ -1,44 +1,32 @@
 {
-  "manifest_version": 2,
-  "name": "Microsoft Rewards Bot",
-  "version": "2.24.2.1",
-  "icons": {
-    "16": "img/bingRwLogo@1x.png",
-    "24": "img/bingRwLogo@1.5x.png",
-    "32": "img/bingRwLogo@2x.png",
-    "48": "img/bingRwLogo@3x.png",
-    "128": "img/bingRwLogo@8x.png"
-  },  
-  "description": "A Chrome extension for Microsoft Rewards that automatically clears PC, mobile and EDGE search quests and displays daily point countdown.",
-
-  "background": {
-    "persistent": true,
-    "scripts": [
-      "status/DailyQuest.js",
-      "status/DailyRewardStatus.js",
-      "quest/searchQuest.js",
-      "quest/quizDailyQuest.js",
-      "googleTrend.js",
-      "utility.js",
-      "badge.js",
-      "exception.js",
-      "background.js",
-      "test.js"
-    ]
-  },
-
-  "browser_action": {
-    "default_title": "Microsoft Rewards Bot",
-    "default_popup": "popup/popup.html"
-  },
-
-  "permissions": [
-    "https://trends.google.com/trends/*",
-    "https://*.microsoft.com/*",
-    "https://*.bing.com/*",
-    "webRequest",
-    "webRequestBlocking",
-    "storage",
-    "notifications"
-  ]
+	"manifest_version": 3,
+	"name": "Microsoft Rewards Bot",
+	"version": "2.25.1",
+	"icons": {
+		"16": "img/bingRwLogo@1x.png",
+		"24": "img/bingRwLogo@1.5x.png",
+		"32": "img/bingRwLogo@2x.png",
+		"48": "img/bingRwLogo@3x.png",
+		"128": "img/bingRwLogo@8x.png"
+	},
+	"description": "A Chrome extension for Microsoft Rewards that automatically clears PC, mobile and EDGE search quests and displays daily point countdown.",
+	"background": {
+		"service_worker": "background.js",
+		"type": "module"
+	},
+	"action": {
+		"default_title": "Microsoft Rewards Bot",
+		"default_popup": "popup/popup.html"
+	},
+	"permissions": [
+		"notifications",
+		"storage",
+		"webRequest",
+		"declarativeNetRequest"
+	],
+	"host_permissions": [
+		"https://*.bing.com/*",
+		"https://*.microsoft.com/*",
+		"https://trends.google.com/trends/*"
+	]
 }

@@ -1,5 +1,14 @@
 'use strict';
 
+import {isNewDay, getDebugInfo} from './utility.js';
+import {setBadge, isCurrentBadge, GreyBadge, BusyBadge, DoneBadge, ErrorBadge} from './badge.js';
+import {handleException} from './exception.js';
+import {GoogleTrend} from './GoogleTrend.js';
+import {DailyRewardStatus} from './status/dailyRewardStatus.js';
+import {checkQuizAndDaily} from './quest/quizDailyQuest.js';
+import {SearchQuest} from './quest/searchQuest.js';
+import {STATUS_BUSY} from '../constants.js';
+
 function onExtensionLoad() {
     setBadge(new GreyBadge());
     loadSavedSettings();
@@ -72,7 +81,11 @@ async function doBackgroundWork() {
 
     setBadge(new BusyBadge());
 
-    checkNewDay();
+    if (isNewDay()) {
+        searchQuest.reset();
+        googleTrend.reset();
+    }
+    
     await checkDailyRewardStatus();
 
     if (isCurrentBadge('busy')) {
@@ -126,15 +139,15 @@ const WORKER_ACTIVATION_INTERVAL = 7200000; // Interval at which automatic backg
 const WAIT_FOR_ONLINE_TIMEOUT = 60000;
 
 const googleTrend = new GoogleTrend();
-const userDailyStatus = new DailyRewardStatus();
+export const userDailyStatus = new DailyRewardStatus();
 const searchQuest = new SearchQuest(googleTrend);
-let developer = false;
-let userAgents;
-let _compatibilityMode;
-let _pcUaOverrideEnable;
-let _mbUaOverrideEnable;
-let _pcUaOverrideValue;
-let _mbUaOverrideValue;
+export let developer = false;
+export let userAgents;
+export let _compatibilityMode;
+export let _pcUaOverrideEnable;
+export let _mbUaOverrideEnable;
+export let _pcUaOverrideValue;
+export let _mbUaOverrideValue;
 
 chrome.runtime.onInstalled.addListener(function (details) {
     if (details.reason == 'install') {

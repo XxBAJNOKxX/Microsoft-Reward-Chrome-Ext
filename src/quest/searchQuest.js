@@ -1,4 +1,9 @@
-class SearchQuest {
+import {getUA, getUpdatedUA} from '../utility.js';
+import {UserAgentInvalidException, FetchFailedException} from '../exception.js';
+import {STATUS_NONE, STATUS_BUSY, STATUS_DONE, STATUS_ERROR} from '../constants.js';
+import {developer, userAgents} from '../background.js';
+
+export class SearchQuest {
     constructor(googleTrend) {
         this._googleTrend_ = googleTrend;
         this._searchIntervalMS = 2000;
@@ -146,7 +151,7 @@ class SearchQuest {
         }
 
         if (response.status != 200) {
-            throw new FetchResponseAnomalyException('Search');
+            throw new FetchFailedException('Search', undefined, `response status is {response.status}`);
         }
 
         this._currentSearchCount_++;
@@ -171,44 +176,77 @@ class SearchQuest {
 }
 
 function removeUA() {
-    try {
-        chrome.webRequest.onBeforeSendHeaders.removeListener(toMobileReqHeaders);
-    } catch (ex) { }
-    try {
-        chrome.webRequest.onBeforeSendHeaders.removeListener(toPCReqHeaders);
-    } catch (ex) { }
+    chrome.declarativeNetRequest.updateDynamicRules(
+        {
+            removeRuleIds: [1],
+        });
 }
 
 function setPCReqHeaders() {
-    chrome.webRequest.onBeforeSendHeaders.addListener(toPCReqHeaders, {
-        urls: ['https://*.bing.com/search?q=*'],
-    }, ['blocking', 'requestHeaders']);
-}
-
-function toPCReqHeaders() {
-    const newHeaders = [];
-    newHeaders.push({name: 'accept', value: '*/*'});
-    newHeaders.push({name: 'User-Agent', value: userAgents.pc});
-    return {
-        requestHeaders: newHeaders,
-    };
+    chrome.declarativeNetRequest.updateDynamicRules(
+        {
+            removeRuleIds: [1],
+            addRules: [
+                {
+                    id: 1,
+                    priority: 1,
+                    action: {
+                        type: 'modifyHeaders',
+                        requestHeaders: [
+                            {
+                                'header': 'User-Agent',
+                                'operation': 'set',
+                                'value': userAgents.pc,
+                            },
+                        ],
+                    },
+                    condition: {
+                        urlFilter: '||bing.com/search*',
+                        resourceTypes: ['xmlhttprequest'],
+                    },
+                },
+            ],
+        },
+    );
 }
 
 function setMobileReqHeaders() {
-    chrome.webRequest.onBeforeSendHeaders.addListener(toMobileReqHeaders, {
-        urls: ['https://*.bing.com/search?q=*'],
-    }, ['blocking', 'requestHeaders']);
+    chrome.declarativeNetRequest.updateDynamicRules(
+        {
+            removeRuleIds: [1],
+            addRules: [
+                {
+                    id: 1,
+                    priority: 1,
+                    action: {
+                        type: 'modifyHeaders',
+                        requestHeaders: [
+                            {'header': 'User-Agent',
+                                'operation': 'set',
+                                'value': userAgents.mb},
+                        ],
+                    },
+                    condition: {
+                        urlFilter: '||bing.com/search*',
+                        resourceTypes: ['xmlhttprequest'],
+                    },
+                },
+            ],
+        },
+    );
 }
 
-function toMobileReqHeaders() {
-    const newHeaders = [];
-    newHeaders.push({name: 'accept', value: '*/*'});
-    newHeaders.push({name: 'User-Agent', value: userAgents.mb});
+function toMobileReqHeaders(details) {
+    for (const i in details.requestHeaders) {
+        if (details.requestHeaders[i].name === 'User-Agent') {
+            details.requestHeaders[i].value = userAgents.mb;
+            break;
+        }
+    }
     return {
-        requestHeaders: newHeaders,
+        requestHeaders: details.requestHeaders,
     };
 }
-
 
 function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -246,8 +284,4 @@ function notifyUpdatedUAOutdated() {
 
 const SEARCH_TYPE_PC_SEARCH = 0;
 const SEARCH_TYPE_MB_SEARCH = 1;
-const STATUS_NONE = 0;
-const STATUS_BUSY = 1;
-const STATUS_DONE = 20;
 const STATUS_WARNING = 30;
-const STATUS_ERROR = 3;
