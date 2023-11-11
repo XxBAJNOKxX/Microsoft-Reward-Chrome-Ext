@@ -159,8 +159,24 @@ class SearchQuest {
         const word = this._currentSearchType_ == SEARCH_TYPE_PC_SEARCH ?
             this._googleTrend_.nextPCWord :
             this._googleTrend_.nextMBWord;
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let combination = '';
+          
+            for (let i = 0; i < 32; i++) {
+              const randomIndex = Math.floor(Math.random() * chars.length);
+              combination += chars.charAt(randomIndex);
+            }
+        var qsthings = ['n', 'SSE', 'n', 'SS', 'n'];
+        var qs = qsthings[Math.floor(Math.random() * qsthings.length)];
+        var spnums = [1, 2, 5, 8, 9, 10, -1];
+        var sp = spnums[Math.floor(Math.random() * spnums.length)];
+        var scnums = [10, 11, 16, 7, 19];
+        var sc = scnums[Math.floor(Math.random() * scnums.length)];
+        var wordlen = word.length;
+        var endthings = ['&ghsh=0&ghacc=0&ghpl=', ''];
+        var end = endthings[Math.floor(Math.random() * endthings.length)];
 
-        return `https://www.bing.com/search?q=${word}&pq=${word}&qs=n&form=QBRE&sp=-1&ghc=1&lq=0&sc=19-17&sk=&cvid=ADDBB84BF87A484E97DEE1C82C5378DD&ghsh=0&ghacc=0&ghpl=`;
+        return `https://www.bing.com/search?q=${word}&pq=${word}&qs=${qs}&form=QBRE&sp=${sp}&ghc=1&lq=0&sc=${sc}-${wordlen}&sk=&cvid=${combination}${end}`;
     }
 
     _isCurrentSearchCompleted() {
