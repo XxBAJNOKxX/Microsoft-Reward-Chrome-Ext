@@ -163,7 +163,7 @@ class SearchQuest {
 
         let combination = '';
         let numbers = new Uint8Array(16);
-        crypto.getRandomValues(number);
+        crypto.getRandomValues(numbers);
         combination = numbers.toString().split(",").map((e)=>{return parseInt(e).toString(16)}).join("").toUpperCase()
 
 
