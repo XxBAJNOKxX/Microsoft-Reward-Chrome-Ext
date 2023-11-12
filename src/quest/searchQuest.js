@@ -159,13 +159,14 @@ class SearchQuest {
         const word = this._currentSearchType_ == SEARCH_TYPE_PC_SEARCH ?
             this._googleTrend_.nextPCWord :
             this._googleTrend_.nextMBWord;
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+
+
         let combination = '';
-          
-            for (let i = 0; i < 32; i++) {
-              const randomIndex = Math.floor(Math.random() * chars.length);
-              combination += chars.charAt(randomIndex);
-            }
+        let numbers = new Uint8Array(16);
+        crypto.getRandomValues(number);
+        combination = numbers.toString().split(",").map((e)=>{return parseInt(e).toString(16)}).join("").toUpperCase()
+
+
         var qsthings = ['n', 'SSE', 'n', 'SS', 'n'];
         var qs = qsthings[Math.floor(Math.random() * qsthings.length)];
         var spnums = [1, 2, 5, 8, 9, 10, -1];
