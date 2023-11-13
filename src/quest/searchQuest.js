@@ -161,23 +161,25 @@ class SearchQuest {
             this._googleTrend_.nextMBWord;
 
 
-        let combination = '';
-        let numbers = new Uint8Array(16);
-        crypto.getRandomValues(numbers);
-        combination = numbers.toString().split(",").map((e)=>{return parseInt(e).toString(16)}).join("").toUpperCase()
+        // let combination = '';
+        // let numbers = new Uint8Array(16);
+        // crypto.getRandomValues(numbers);
+        // combination = numbers.toString().split(",").map((e)=>{return parseInt(e).toString(16)}).join("").toUpperCase()
 
 
-        var qsthings = ['n', 'SSE', 'n', 'SS', 'n'];
-        var qs = qsthings[Math.floor(Math.random() * qsthings.length)];
-        var spnums = [1, 2, 5, 8, 9, 10, -1];
-        var sp = spnums[Math.floor(Math.random() * spnums.length)];
-        var scnums = [10, 11, 16, 7, 19];
-        var sc = scnums[Math.floor(Math.random() * scnums.length)];
-        var wordlen = word.length;
-        var endthings = ['&ghsh=0&ghacc=0&ghpl=', ''];
-        var end = endthings[Math.floor(Math.random() * endthings.length)];
+        // var qsthings = ['n', 'SSE', 'n', 'SS', 'n'];
+        // var qs = qsthings[Math.floor(Math.random() * qsthings.length)];
+        // var spnums = [1, 2, 5, 8, 9, 10, -1];
+        // var sp = spnums[Math.floor(Math.random() * spnums.length)];
+        // var scnums = [10, 11, 16, 7, 19];
+        // var sc = scnums[Math.floor(Math.random() * scnums.length)];
+        // var wordlen = word.length;
+        // var endthings = ['&ghsh=0&ghacc=0&ghpl=', ''];
+        // var end = endthings[Math.floor(Math.random() * endthings.length)];
 
-        return `https://www.bing.com/search?q=${word}&pq=${word}&qs=${qs}&form=QBRE&sp=${sp}&ghc=1&lq=0&sc=${sc}-${wordlen}&sk=&cvid=${combination}${end}`;
+        // Only the form parameter is needed for the searches to count, see: https://customup.davidkra230.xyz/uploads/only_form_parameter.png
+
+        return `https://www.bing.com/search?q=${word}&form=QBRE`//&pq=${word}&qs=${qs}&form=QBRE&sp=${sp}&ghc=1&lq=0&sc=${sc}-${wordlen}&sk=&cvid=${combination}${end}`;
     }
 
     _isCurrentSearchCompleted() {
