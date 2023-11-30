@@ -36,15 +36,6 @@ class SearchQuest {
         }
     }
 
-    // Random delay function
-     randomDelay() {
-        // Generate a random number between 3000 and 7000
-        const delay = Math.floor(Math.random() * (7000 - 3000 + 1)) + 3000;
-    
-        // Return a promise that resolves after the delay
-        return new Promise(resolve => setTimeout(resolve, delay));
-    }
-
     async _doWorkLoop() {
         while (true) {
             if (this._status_.isSearchCompleted) {
@@ -58,9 +49,6 @@ class SearchQuest {
 
             await this._startSearchQuests();
 
-            // Call random delay
-            await randomDelay();
-
             const flag = await this.isSearchSuccessful();
             if (flag > 0) {
                 await this._getAlternativeUA(flag);
@@ -70,10 +58,6 @@ class SearchQuest {
 
     async _startSearchQuests() {
         await this._doPcSearch();
-
-        // call random delay
-        await randomDelay();
-
         await this._doMbSearch();
         this._quitSearchCleanUp();
     }
@@ -109,29 +93,21 @@ class SearchQuest {
     }
 
     async _doPcSearch() {
-        for (let query of queries) {
-            this._initiateSearch();
-            if (this._currentSearchType_ != SEARCH_TYPE_PC_SEARCH) {
-                this._preparePCSearch();
-            }
-    
-            await this._requestBingSearch(query);
-            // Add a random delay after each query
-            await this.randomDelay();
+        this._initiateSearch();
+        if (this._currentSearchType_ != SEARCH_TYPE_PC_SEARCH) {
+            this._preparePCSearch();
         }
+
+        await this._requestBingSearch();
     }
-    
+
     async _doMbSearch() {
-        for (let query of queries) {
-            this._initiateSearch();
-            if (this._currentSearchType_ != SEARCH_TYPE_MB_SEARCH) {
-                this._prepareMbSearch();
-            }
-    
-            await this._requestBingSearch(query);
-            // Add a random delay after each query
-            await this.randomDelay();
+        this._initiateSearch();
+        if (this._currentSearchType_ != SEARCH_TYPE_MB_SEARCH) {
+            this._prepareMbSearch();
         }
+
+        await this._requestBingSearch();
     }
 
     _initiateSearch() {
@@ -185,23 +161,25 @@ class SearchQuest {
             this._googleTrend_.nextMBWord;
 
 
-        let combination = '';
-        let numbers = new Uint8Array(16);
-        crypto.getRandomValues(numbers);
-        combination = numbers.toString().split(",").map((e)=>{return parseInt(e).toString(16)}).join("").toUpperCase()
+        // let combination = '';
+        // let numbers = new Uint8Array(16);
+        // crypto.getRandomValues(numbers);
+        // combination = numbers.toString().split(",").map((e)=>{return parseInt(e).toString(16)}).join("").toUpperCase()
 
 
-        var qsthings = ['n', 'SSE', 'n', 'SS', 'n'];
-        var qs = qsthings[Math.floor(Math.random() * qsthings.length)];
-        var spnums = [1, 2, 5, 8, 9, 10, -1];
-        var sp = spnums[Math.floor(Math.random() * spnums.length)];
-        var scnums = [10, 11, 16, 7, 19];
-        var sc = scnums[Math.floor(Math.random() * scnums.length)];
-        var wordlen = word.length;
-        var endthings = ['&ghsh=0&ghacc=0&ghpl=', ''];
-        var end = endthings[Math.floor(Math.random() * endthings.length)];
+        // var qsthings = ['n', 'SSE', 'n', 'SS', 'n'];
+        // var qs = qsthings[Math.floor(Math.random() * qsthings.length)];
+        // var spnums = [1, 2, 5, 8, 9, 10, -1];
+        // var sp = spnums[Math.floor(Math.random() * spnums.length)];
+        // var scnums = [10, 11, 16, 7, 19];
+        // var sc = scnums[Math.floor(Math.random() * scnums.length)];
+        // var wordlen = word.length;
+        // var endthings = ['&ghsh=0&ghacc=0&ghpl=', ''];
+        // var end = endthings[Math.floor(Math.random() * endthings.length)];
 
-        return `https://www.bing.com/search?q=${word}&pq=${word}&qs=${qs}&form=QBRE&sp=${sp}&ghc=1&lq=0&sc=${sc}-${wordlen}&sk=&cvid=${combination}${end}`;
+        // Only the form parameter is needed for the searches to count, see: https://customup.davidkra230.xyz/uploads/only_form_parameter.png
+
+        return `https://www.bing.com/search?q=${word}&form=QBRE`//&pq=${word}&qs=${qs}&form=QBRE&sp=${sp}&ghc=1&lq=0&sc=${sc}-${wordlen}&sk=&cvid=${combination}${end}`;
     }
 
     _isCurrentSearchCompleted() {
