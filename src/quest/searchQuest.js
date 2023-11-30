@@ -36,6 +36,15 @@ class SearchQuest {
         }
     }
 
+    // Random delay function
+     randomDelay() {
+        // Generate a random number between 3000 and 7000
+        const delay = Math.floor(Math.random() * (7000 - 3000 + 1)) + 3000;
+    
+        // Return a promise that resolves after the delay
+        return new Promise(resolve => setTimeout(resolve, delay));
+    }
+
     async _doWorkLoop() {
         while (true) {
             if (this._status_.isSearchCompleted) {
@@ -49,6 +58,9 @@ class SearchQuest {
 
             await this._startSearchQuests();
 
+            // Call random delay
+            await randomDelay();
+
             const flag = await this.isSearchSuccessful();
             if (flag > 0) {
                 await this._getAlternativeUA(flag);
@@ -58,6 +70,10 @@ class SearchQuest {
 
     async _startSearchQuests() {
         await this._doPcSearch();
+
+        // call random delay
+        await randomDelay();
+
         await this._doMbSearch();
         this._quitSearchCleanUp();
     }
@@ -93,21 +109,29 @@ class SearchQuest {
     }
 
     async _doPcSearch() {
+        for (let query of queries) {
         this._initiateSearch();
         if (this._currentSearchType_ != SEARCH_TYPE_PC_SEARCH) {
             this._preparePCSearch();
         }
 
         await this._requestBingSearch();
+        // Add a random delay after each query
+        await this.randomDelay();
+        }
     }
 
     async _doMbSearch() {
+        for (let query of queries) {
         this._initiateSearch();
         if (this._currentSearchType_ != SEARCH_TYPE_MB_SEARCH) {
             this._prepareMbSearch();
         }
 
         await this._requestBingSearch();
+        // Add a random delay after each query
+        await this.randomDelay();
+        }
     }
 
     _initiateSearch() {
