@@ -154,7 +154,7 @@ async function getStableUA() {
         (text) => {
             const ua = JSON.parse(text);
             userAgents = {
-                'pc': ua.stable.edge_win,
+                'pc': ua.stable.edge_windows,
                 'mb': ua.stable.chrome_ios,
                 'pcSource': 'stable',
                 'mbSource': 'stable',

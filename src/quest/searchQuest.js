@@ -134,6 +134,14 @@ class SearchQuest {
         removeUA();
     }
 
+    //Delay Function
+    async _delayWithCountdown(seconds) {
+        for (let i = seconds; i > 0; i--) {
+            setTimeout(() => console.log("Delay: " + i), (seconds - i) * 1000);
+        }
+        return new Promise(resolve => setTimeout(resolve, seconds * 1000));
+    }
+
     async _requestBingSearch() {
         if (this._isCurrentSearchCompleted()) {
             return;
@@ -144,14 +152,15 @@ class SearchQuest {
         } catch (ex) {
             throw new FetchFailedException('Search', ex);
         }
-
+    
         if (response.status != 200) {
             throw new FetchResponseAnomalyException('Search');
         }
-
+    
         this._currentSearchCount_++;
-        await sleep(this._searchIntervalMS);
-
+        await this._delayWithCountdown(6);
+        console.log(`Search #${this._currentSearchCount_} complete`);
+    
         await this._requestBingSearch();
     }
 
@@ -179,7 +188,7 @@ class SearchQuest {
 
         // Only the form parameter is needed for the searches to count, see: https://customup.davidkra230.xyz/uploads/only_form_parameter.png
 
-        return `https://www.bing.com/search?q=${word}&form=QBRE`//&pq=${word}&qs=${qs}&form=QBRE&sp=${sp}&ghc=1&lq=0&sc=${sc}-${wordlen}&sk=&cvid=${combination}${end}`;
+        return `https://www.bing.com/search?q=${word}&FORM=QBRE`//&pq=${word}&qs=${qs}&form=QBRE&sp=${sp}&ghc=1&lq=0&sc=${sc}-${wordlen}&sk=&cvid=${combination}${end}`;
     }
 
     _isCurrentSearchCompleted() {
