@@ -110,27 +110,27 @@ class SearchQuest {
 
     async _doPcSearch() {
         for (let query of queries) {
-        this._initiateSearch();
-        if (this._currentSearchType_ != SEARCH_TYPE_PC_SEARCH) {
-            this._preparePCSearch();
-        }
-
-        await this._requestBingSearch();
-        // Add a random delay after each query
-        await this.randomDelay();
+            this._initiateSearch();
+            if (this._currentSearchType_ != SEARCH_TYPE_PC_SEARCH) {
+                this._preparePCSearch();
+            }
+    
+            await this._requestBingSearch(query);
+            // Add a random delay after each query
+            await this.randomDelay();
         }
     }
-
+    
     async _doMbSearch() {
         for (let query of queries) {
-        this._initiateSearch();
-        if (this._currentSearchType_ != SEARCH_TYPE_MB_SEARCH) {
-            this._prepareMbSearch();
-        }
-
-        await this._requestBingSearch();
-        // Add a random delay after each query
-        await this.randomDelay();
+            this._initiateSearch();
+            if (this._currentSearchType_ != SEARCH_TYPE_MB_SEARCH) {
+                this._prepareMbSearch();
+            }
+    
+            await this._requestBingSearch(query);
+            // Add a random delay after each query
+            await this.randomDelay();
         }
     }
 
