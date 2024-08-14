@@ -1,7 +1,7 @@
 class SearchQuest {
     constructor(googleTrend) {
         this._googleTrend_ = googleTrend;
-        this._searchIntervalMS = 2000;
+        this._searchIntervalMS = 2000
         this.reset();
     }
 
@@ -144,42 +144,55 @@ class SearchQuest {
         } catch (ex) {
             throw new FetchFailedException('Search', ex);
         }
-
+    
         if (response.status != 200) {
             throw new FetchResponseAnomalyException('Search');
         }
-
+    
         this._currentSearchCount_++;
-        await sleep(this._searchIntervalMS);
-
+        const minInterval = 6000;
+        const maxInterval = 15000;
+        let sleeptime = Math.floor(Math.random() * (maxInterval - minInterval + 1)) + minInterval
+        console.log(`Sleeping for: ${Math.round(sleeptime/1000,2)} sec`)
+        await sleep(sleeptime);
+        console.log(`Search complete`);
+    
         await this._requestBingSearch();
     }
 
     _getBingSearchUrl() {
-        const word = this._currentSearchType_ == SEARCH_TYPE_PC_SEARCH ?
+        let word = this._currentSearchType_ == SEARCH_TYPE_PC_SEARCH ?
             this._googleTrend_.nextPCWord :
             this._googleTrend_.nextMBWord;
-
-
-        // let combination = '';
-        // let numbers = new Uint8Array(16);
-        // crypto.getRandomValues(numbers);
-        // combination = numbers.toString().split(",").map((e)=>{return parseInt(e).toString(16)}).join("").toUpperCase()
-
-
-        // var qsthings = ['n', 'SSE', 'n', 'SS', 'n'];
-        // var qs = qsthings[Math.floor(Math.random() * qsthings.length)];
-        // var spnums = [1, 2, 5, 8, 9, 10, -1];
-        // var sp = spnums[Math.floor(Math.random() * spnums.length)];
-        // var scnums = [10, 11, 16, 7, 19];
-        // var sc = scnums[Math.floor(Math.random() * scnums.length)];
-        // var wordlen = word.length;
-        // var endthings = ['&ghsh=0&ghacc=0&ghpl=', ''];
-        // var end = endthings[Math.floor(Math.random() * endthings.length)];
-
-        // Only the form parameter is needed for the searches to count, see: https://customup.davidkra230.xyz/uploads/only_form_parameter.png
-
-        return `https://www.bing.com/search?q=${word}&form=QBRE`//&pq=${word}&qs=${qs}&form=QBRE&sp=${sp}&ghc=1&lq=0&sc=${sc}-${wordlen}&sk=&cvid=${combination}${end}`;
+            word = word.replace(/ /g, '_');
+    
+        let combination = '';
+        let refigcombination = '';
+        let numbers = new Uint8Array(16);
+        crypto.getRandomValues(numbers);
+        combination = numbers.toString().split(",").map((e)=>{return parseInt(e).toString(16)}).join("").toUpperCase()
+        refigcombination = numbers.toString().split(",").map((e)=>{return parseInt(e).toString(16)}).join("")
+    
+        const randomChoice = arr => arr[Math.floor(Math.random() * arr.length)];
+        const randomInclude = () => Math.random() < 0.7; // 70% chance to include each parameter
+    
+        let url = `https://www.bing.com/search?q=${word}`;
+    
+        // form parameter is always included as it's needed for the searches to count
+        url += `&form=${randomChoice(['QBLH', 'QBRE', 'QSRE', 'CONMHP', 'ANAB01', 'SBIES', 'GESBIES', 'HPBSBI', 'HPBSB', 'HDRSC2', 'PRUSEN', 'ENTLNK', 'MSNSEA', 'MSNLIF', 'MSNINT', 'MSNHPH', 'MSNHPS', 'EDGSPH', 'EDGGTC', 'EDGSI', 'EDGDCT', 'EDGLIS', 'EDGNSP', 'EDGSNS'])}`;
+    
+        if (randomInclude()) url += `&refig=${refigcombination}`;
+        if (randomInclude()) url += `&pq=${word}`;
+        if (randomInclude()) url += `&qs=${randomChoice(['n', 'SSE', 'n', 'SS', 'n'])}`;
+        if (randomInclude()) url += `&sp=${randomChoice(['-1', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'])}`;
+        if (randomInclude()) url += `&ghc=${randomChoice(['0', '1'])}`;
+        if (randomInclude()) url += `&lq=${randomChoice(['0', '1'])}`;
+        if (randomInclude()) url += `&sc=${randomChoice([10, 11, 16, 7, 19])}-${word.length}`;
+        if (randomInclude()) url += `&cvid=${combination}`;
+        if (randomInclude()) url += randomChoice(['&ghsh=0&ghacc=0&', '&ghsh=1&ghacc=1&ghpl=', '&ghsh=0&ghacc=1&', '&ghsh=1&ghacc=0&ghpl=']);
+    
+        console.log(url)
+        return url;
     }
 
     _isCurrentSearchCompleted() {

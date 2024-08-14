@@ -1,3 +1,4 @@
+# THIS IS A TEST VERSION! Use at your own risk!
 [![CodeFactor](https://www.codefactor.io/repository/github/tmxkn1/microsoft-reward-chrome-ext/badge)](https://www.codefactor.io/repository/github/tmxkn1/microsoft-reward-chrome-ext)
 
 # Microsoft Rewards Bot
